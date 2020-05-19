@@ -42,7 +42,6 @@ const Dashboard: React.FC = () => {
         console.log(error);
       }
     }
-
     loadProducts();
   }, []);
 

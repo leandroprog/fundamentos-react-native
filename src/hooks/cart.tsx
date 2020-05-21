@@ -26,19 +26,46 @@ interface CartContext {
 const CartContext = createContext<CartContext | null>(null);
 
 const CartProvider: React.FC = ({ children }) => {
+  console.log('############### CartProvider #############');
+
   const [products, setProducts] = useState<Product[]>([]);
 
   useEffect(() => {
     async function loadProducts(): Promise<void> {
-      // TODO LOAD ITEMS FROM ASYNC STORAGE
+      const productsStorage = await AsyncStorage.getItem(
+        '@MarketPlace:products',
+      );
+      if (productsStorage) setProducts(JSON.parse(productsStorage));
     }
 
     loadProducts();
   }, []);
 
-  const addToCart = useCallback(async product => {
-    // TODO ADD A NEW ITEM TO THE CART
-  }, []);
+  const addToCart = useCallback(
+    async product => {
+      let productsData: Product[] = [];
+      console.log('products Initr', products);
+
+      const productExist = products.find(item => item.id === product.id);
+      console.log('productExist', productExist);
+
+      if (productExist) {
+        productExist.quantity += 1;
+        productsData = [...products];
+      } else {
+        productsData = [...products, { ...product, quantity: 1 }];
+      }
+      console.log('productsData', productsData);
+
+      await AsyncStorage.setItem(
+        '@MarketPlace:products',
+        JSON.stringify(productsData),
+      );
+
+      setProducts([...productsData]);
+    },
+    [products],
+  );
 
   const increment = useCallback(async id => {
     // TODO INCREMENTS A PRODUCT QUANTITY IN THE CART

@@ -41,9 +41,6 @@ const CartProvider: React.FC = ({ children }) => {
 
   const addToCart = useCallback(
     async product => {
-
-      console.log('passou', product);
-
       let productsData: Product[] = [];
       const productExist = products.find(item => item.id === product.id);
 
@@ -53,13 +50,12 @@ const CartProvider: React.FC = ({ children }) => {
       } else {
         productsData = [...products, { ...product, quantity: 1 }];
       }
+      setProducts([...productsData]);
 
       await AsyncStorage.setItem(
         '@MarketPlace:products',
         JSON.stringify(productsData),
       );
-
-      setProducts([...productsData]);
     },
     [products],
   );
@@ -70,12 +66,12 @@ const CartProvider: React.FC = ({ children }) => {
       if (!productExist) return;
       productExist.quantity += 1;
 
+      setProducts([...products]);
+
       await AsyncStorage.setItem(
         '@MarketPlace:products',
         JSON.stringify(products),
       );
-
-      setProducts([...products]);
     },
     [products],
   );
@@ -90,12 +86,12 @@ const CartProvider: React.FC = ({ children }) => {
       if (!products[index].quantity) {
         products.splice(index, 1);
       }
+      setProducts([...products]);
+
       await AsyncStorage.setItem(
         '@MarketPlace:products',
         JSON.stringify(products),
       );
-
-      setProducts([...products]);
     },
     [products],
   );
